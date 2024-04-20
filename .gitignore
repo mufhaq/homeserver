@@ -1,0 +1,14 @@
+apps/*test*
+**test**
+**volume**
+.env
+.test.env
+**[Cc]onfig.yml
+**[Tt]raefik.yml
+**[Aa]cme.json
+**/*.conf
+**/*.cache
+**env*
+!**example*
+data
+data_test

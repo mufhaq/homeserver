@@ -1,0 +1,35 @@
+services:
+  owncloud:
+    image: ${IMAGE_OWNCLOUD}
+    container_name: ${OWNCLOUD_CONTAINER_NAME}
+    environment:
+      OWNCLOUD_DOMAIN: ${OWNCLOUD_DOMAIN}
+      OWNCLOUD_TRUSTED_DOMAINS: ${OWNCLOUD_DOMAIN_TRUSTED}
+      OWNCLOUD_DB_TYPE: ${OWNCLOUD_DATABASE_TYPE}
+      OWNCLOUD_DB_NAME: ${OWNCLOUD_MARIADB_DATABASE_NAME}
+      OWNCLOUD_DB_USERNAME: ${OWNCLOUD_MARIADB_DATABASE_USERNAME}
+      OWNCLOUD_DB_PASSWORD: ${OWNCLOUD_MARIADB_DATABASE_PASSWORD}
+      OWNCLOUD_DB_HOST: ${OWNCLOUD_MARIADB_DATABASE_HOST}
+      OWNCLOUD_REDIS_HOST: ${OWNCLOUD_REDIS_DATABASE_HOST}
+      OWNCLOUD_ADMIN_USERNAME: ${OWNCLOUD_WEB_ADMIN_USERNAME}
+      OWNCLOUD_ADMIN_PASSWORD: ${OWNCLOUD_WEB_ADMIN_PASSWORD}
+      OWNCLOUD_MYSQL_UTF8MB4: true
+      OWNCLOUD_REDIS_ENABLED: true
+    labels:
+      traefik.http.routers.owncloud.rule: Host(${REVERSE_PROXY_HOST_OWNCLOUD})
+      traefik.http.services.owncloud.loadbalancer.server.port: 8080
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    ports:
+      - ${OWNCLOUD_PORT_WEB_UI}:8080
+    depends_on:
+      - mariadb
+      - redis
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ${OWNCLOUD_VOLUME}:/mnt/data
+    restart: always

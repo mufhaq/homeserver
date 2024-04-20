@@ -1,0 +1,21 @@
+services:
+  mariadb:
+    image: ${IMAGE_OWNCLOUD_MARIADB}
+    container_name: ${OWNCLOUD_MARIADB_CONTAINER_NAME}
+    environment:
+      MYSQL_ROOT_PASSWORD: ${OWNCLOUD_MARIADB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${OWNCLOUD_MARIADB_DATABASE_NAME}
+      MYSQL_USER: ${OWNCLOUD_MARIADB_DATABASE_USERNAME}
+      MYSQL_PASSWORD: ${OWNCLOUD_MARIADB_DATABASE_PASSWORD}
+      MARIADB_AUTO_UPGRADE: 1
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    command: ["--max-allowed-packet=128M", "--innodb-log-file-size=64M"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u", "root", "--password=owncloud"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ${OWNCLOUD_MARIADB_VOLUME}:/var/lib/mysql
+    restart: always

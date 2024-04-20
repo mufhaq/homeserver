@@ -1,0 +1,8 @@
+services:
+  whoami:
+    image: ${IMAGE_TRAEFIK_WHOAMI}
+    container_name: ${TRAEFIK_WHOAMI_CONTAINER_NAME}
+    labels:
+      traefik.http.routers.whoami.rule: Host(`whoami.traefik.localhost`)
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}

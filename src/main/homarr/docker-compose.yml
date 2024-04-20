@@ -1,0 +1,28 @@
+services:
+  homarr:
+    image: ${IMAGE_HOMARR}
+    container_name: ${HOMARR_CONTAINER_NAME}
+    labels:
+      traefik.http.routers.homarr.entrypoints: http
+      traefik.http.routers.homarr.rule: Host(${REVERSE_PROXY_HOST_HOMARR})
+      traefik.http.routers.homarr.tls: false
+      traefik.http.routers.homarr.service: homarr
+      traefik.http.routers.homarr.middlewares: homarr-redirect-https
+      traefik.http.services.homarr.loadbalancer.server.port: 7575
+      traefik.http.middlewares.homarr-redirect-https.redirectscheme.scheme: https
+      # https
+      traefik.http.routers.homarr-secure.entrypoints: https
+      traefik.http.routers.homarr-secure.rule: Host(`${HOST_PROXY_HOMARR}`)
+      traefik.http.routers.homarr-secure.tls: true
+      traefik.http.routers.homarr-secure.service: homarr-secure
+      traefik.http.services.homarr-secure.loadbalancer.server.port: 7575
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    ports:
+      - ${HOMARR_PORT_WEB_UI}:7575
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${HOMARR_VOLUME}/configs:/app/data/configs
+      - ${HOMARR_VOLUME}/icons:/app/public/icons
+      - ${HOMARR_VOLUME}/data:/data
+    restart: unless-stopped

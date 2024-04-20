@@ -1,0 +1,31 @@
+services:
+  sftpgo:
+    image: ${IMAGE_SFTPGO}
+    container_name: ${SFTPGO_CONTAINER_NAME}
+    environment:
+      SFTPGO_WEBDAVD__BINDINGS__0__PORT: ${SFTPGO_PORT_WEBDAV}
+      SFTPGO_SFTPD__BINDINGS__0__PORT: ${SFTPGO_PORT_SFTP}
+    labels:
+      traefik.http.routers.sftpgo.entrypoints: http
+      traefik.http.routers.sftpgo.rule: Host(${REVERSE_PROXY_HOST_SFTPGO})
+      traefik.http.routers.sftpgo.tls: false
+      traefik.http.routers.sftpgo.service: sftpgo
+      traefik.http.routers.sftpgo.middlewares: sftpgo-redirect-https
+      traefik.http.services.sftpgo.loadbalancer.server.port: 8080
+      traefik.http.middlewares.sftpgo-redirect-https.redirectscheme.scheme: https
+      # https
+      traefik.http.routers.sftpgo-secure.entrypoints: https
+      traefik.http.routers.sftpgo-secure.rule: Host(`${HOST_PROXY_SFTPGO}`)
+      traefik.http.routers.sftpgo-secure.tls: true
+      traefik.http.routers.sftpgo-secure.service: sftpgo-secure
+      traefik.http.services.sftpgo-secure.loadbalancer.server.port: 8080
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    ports:
+      - ${SFTPGO_PORT_SFTP}:${SFTPGO_PORT_SFTP}
+      - ${SFTPGO_PORT_WEBDAV}:${SFTPGO_PORT_WEBDAV}
+      - ${SFTPGO_PORT_WEB_UI}:8080 # WEB UI
+    volumes:
+      - ${SFTPGO_VOLUME_USER}:/srv/sftpgo/data
+      - ${SFTPGO_VOLUME}/var/lib/sftpgo:/var/lib/sftpgo
+    restart: unless-stopped

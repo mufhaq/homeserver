@@ -1,0 +1,9 @@
+services:
+  nextcloud_redis:
+    image: ${IMAGE_NEXTCLOUD_REDIS}
+    container_name: ${NEXTCLOUD_REDIS_CONTAINER_NAME}
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    volumes:
+      - ${NEXTCLOUD_REDIS_VOLUME}:/data
+    restart: always

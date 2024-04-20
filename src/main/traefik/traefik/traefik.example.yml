@@ -1,0 +1,31 @@
+api:
+  insecure: true
+
+entryPoints:
+  http:
+    address: ":80"
+  https:
+    address: ":443"
+  sftp:
+    address: ":1042/tcp"
+
+serversTransport:
+  insecureSkipVerify: true
+
+providers:
+  docker:
+    network: "<your-traefik-global-network>"
+  file:
+    filename: "/etc/traefik/traefik.yml"
+    watch: true
+
+certificatesResolvers:
+  cloudflare:
+    acme:
+      email: "<your-email@domain.com>"
+      storage: acme.json
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "1.0.0.1:53"

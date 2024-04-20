@@ -1,0 +1,5 @@
+name: homeserver
+
+networks:
+  homeserver_network_reverse_proxy:
+    name: homeserver_network_reverse_proxy

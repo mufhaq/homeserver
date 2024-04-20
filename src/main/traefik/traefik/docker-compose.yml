@@ -1,0 +1,35 @@
+services:
+  traefik:
+    image: ${IMAGE_TRAEFIK}
+    container_name: ${TRAEFIK_CONTAINER_NAME}
+    environment:
+      # for config.yml file
+      REVERSE_PROXY_HOST_TRAEFIK: "${REVERSE_PROXY_HOST_TRAEFIK}"
+      # for paid domain with ssl
+      CF_API_EMAIL: ${TRAEFIK_CLOUDFLARE_DNS_API_EMAIL}
+      CF_DNS_API_TOKEN: ${TRAEFIK_CLOUDFLARE_DNS_API_TOKEN}
+    labels:
+      traefik.http.routers.traefik.rule: Host(${REVERSE_PROXY_HOST_TRAEFIK})
+      traefik.http.routers.traefik.entrypoints: "http"
+      traefik.http.routers.traefik.tls: false
+      traefik.http.routers.traefik.middlewares: traefik-redirect-https
+      traefik.http.middlewares.traefik-redirect-https.redirectscheme.scheme: https
+      # https (disable all https from others container if don't want use ssl)
+      traefik.http.routers.traefik-secure.entrypoints: https
+      traefik.http.routers.traefik-secure.rule: Host(`${HOST_PROXY_TRAEFIK}`)
+      traefik.http.routers.traefik-secure.tls: true
+      # generate certificate
+      traefik.http.routers.traefik-secure.tls.certresolver: $HOMESERVER_TLS_CERTRESOLVER
+      traefik.http.routers.traefik-secure.tls.domains[0].main: "$HOMESERVER_HOST_EXTENSION_PROXY"
+      traefik.http.routers.traefik-secure.tls.domains[0].sans: "*.${HOMESERVER_HOST_EXTENSION_PROXY}"
+      traefik.http.routers.traefik-secure.service: api@internal
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    ports:
+      - ${TRAEFIK_PORT}:80
+      - ${TRAEFIK_PORT_HTTPS}:443
+      - ${TRAEFIK_PORT_WEB_UI}:8080
+    volumes:
+      - ${DOCKER_DIR_APPS}/traefik/traefik/traefik.yml:/etc/traefik/traefik.yml
+      - ${DOCKER_DIR_APPS}/traefik/traefik/acme.json:/acme.json
+      - /var/run/docker.sock:/var/run/docker.sock

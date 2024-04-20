@@ -1,0 +1,15 @@
+services:
+  redis:
+    image: ${IMAGE_OWNCLOUD_REDIS}
+    container_name: ${OWNCLOUD_REDIS_CONTAINER_NAME}
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    command: ["--databases", "1"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ${OWNCLOUD_REDIS_VOLUME}:/data
+    restart: always
