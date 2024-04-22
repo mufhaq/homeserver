@@ -26,6 +26,8 @@ services:
       traefik.http.services.jellyseerr-secure.loadbalancer.server.port: 5055
     networks:
       - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    ports:
+      - ${JELLYSEERR_PORT_WEB_UI}:5055
     volumes:
       - ${JELLYSEERR_VOLUME}/app/config:/app/config
     restart: unless-stopped
