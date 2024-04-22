@@ -3,17 +3,22 @@ services:
     image: ${IMAGE_HOMARR}
     container_name: ${HOMARR_CONTAINER_NAME}
     labels:
+      # homarr router
       traefik.http.routers.homarr.entrypoints: http
       traefik.http.routers.homarr.rule: Host(${REVERSE_PROXY_HOST_HOMARR})
       traefik.http.routers.homarr.tls: false
+      # homarr service
       traefik.http.routers.homarr.service: homarr
-      traefik.http.routers.homarr.middlewares: homarr-redirect-https
       traefik.http.services.homarr.loadbalancer.server.port: 7575
-      traefik.http.middlewares.homarr-redirect-https.redirectscheme.scheme: https
-      # https
+      # homarr middleware
+      traefik.http.routers.homarr.middlewares: homarr-redirect-https
+      traefik.http.middlewares.homarr-redirect-https.redirectscheme.scheme: ${HOMARR_REDIRECT}
+
+      # homarr-secure
       traefik.http.routers.homarr-secure.entrypoints: https
       traefik.http.routers.homarr-secure.rule: Host(`${HOST_PROXY_HOMARR}`)
       traefik.http.routers.homarr-secure.tls: true
+      # homarr-secure service
       traefik.http.routers.homarr-secure.service: homarr-secure
       traefik.http.services.homarr-secure.loadbalancer.server.port: 7575
     networks:

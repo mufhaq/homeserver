@@ -6,17 +6,22 @@ services:
       SFTPGO_WEBDAVD__BINDINGS__0__PORT: ${SFTPGO_PORT_WEBDAV}
       SFTPGO_SFTPD__BINDINGS__0__PORT: ${SFTPGO_PORT_SFTP}
     labels:
+      # sftpgo router
       traefik.http.routers.sftpgo.entrypoints: http
       traefik.http.routers.sftpgo.rule: Host(${REVERSE_PROXY_HOST_SFTPGO})
       traefik.http.routers.sftpgo.tls: false
+      # sftpgo service
       traefik.http.routers.sftpgo.service: sftpgo
-      traefik.http.routers.sftpgo.middlewares: sftpgo-redirect-https
       traefik.http.services.sftpgo.loadbalancer.server.port: 8080
-      traefik.http.middlewares.sftpgo-redirect-https.redirectscheme.scheme: https
-      # https
+      # sftpgo middleware
+      traefik.http.routers.sftpgo.middlewares: sftpgo-redirect-https
+      traefik.http.middlewares.sftpgo-redirect-https.redirectscheme.scheme: ${SFTPGO_REDIRECT}
+
+      # sftpgo-secure router
       traefik.http.routers.sftpgo-secure.entrypoints: https
       traefik.http.routers.sftpgo-secure.rule: Host(`${HOST_PROXY_SFTPGO}`)
       traefik.http.routers.sftpgo-secure.tls: true
+      # sftpgo-secure service
       traefik.http.routers.sftpgo-secure.service: sftpgo-secure
       traefik.http.services.sftpgo-secure.loadbalancer.server.port: 8080
     networks:

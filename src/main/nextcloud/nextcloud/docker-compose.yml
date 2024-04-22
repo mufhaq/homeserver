@@ -3,7 +3,7 @@ services:
     image: ${IMAGE_NEXTCLOUD}
     container_name: ${NEXTCLOUD_CONTAINER_NAME}
     environment:
-      OVERWRITEPROTOCOL: https
+      OVERWRITEPROTOCOL: ${NEXTCLOUD_REDIRECT}
       NEXTCLOUD_ADMIN_USER: ${NEXTCLOUD_WEB_ADMIN_USERNAME}
       NEXTCLOUD_ADMIN_PASSWORD: ${NEXTCLOUD_WEB_ADMIN_PASSWORD}
       NEXTCLOUD_TRUSTED_DOMAINS: ${NEXTCLOUD_DOMAIN_TRUSTED}
@@ -15,20 +15,26 @@ services:
       # redis
       REDIS_HOST: ${NEXTCLOUD_REDIS_DATABASE_HOST}
     labels:
+      # nextcloud router
       traefik.http.routers.nextcloud.entrypoints: http
       traefik.http.routers.nextcloud.rule: Host(${REVERSE_PROXY_HOST_NEXTCLOUD})
       traefik.http.routers.nextcloud.tls: false
+      # nextcloud service
       traefik.http.routers.nextcloud.service: nextcloud
-      traefik.http.routers.nextcloud.middlewares: nextcloud-redirect-https
       traefik.http.services.nextcloud.loadbalancer.server.port: 80
-      traefik.http.middlewares.nextcloud-redirect-https.redirectscheme.scheme: https
-      # https
+      # nextcloud middleware
+      traefik.http.routers.nextcloud.middlewares: nextcloud-redirect-https
+      traefik.http.middlewares.nextcloud-redirect-https.redirectscheme.scheme: ${NEXTCLOUD_REDIRECT}
+
+      # nextcloud-secure router
       traefik.http.routers.nextcloud-secure.entrypoints: https
       traefik.http.routers.nextcloud-secure.rule: Host(`${HOST_PROXY_NEXTCLOUD}`)
       traefik.http.routers.nextcloud-secure.tls: true
+      # nextcloud-secure service
       traefik.http.routers.nextcloud-secure.service: nextcloud-secure
-      traefik.http.routers.nextcloud-secure.middlewares: nextcloud-secure-header
       traefik.http.services.nextcloud-secure.loadbalancer.server.port: 80
+      # nextcloud-secure middleware
+      traefik.http.routers.nextcloud-secure.middlewares: nextcloud-secure-header
       # hsts
       traefik.http.middlewares.nextcloud-secure-header.headers.stsSeconds: 15552000
       traefik.http.middlewares.nextcloud-secure-header.headers.stsIncludeSubdomains: true

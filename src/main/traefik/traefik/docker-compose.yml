@@ -9,19 +9,26 @@ services:
       CF_API_EMAIL: ${TRAEFIK_CLOUDFLARE_DNS_API_EMAIL}
       CF_DNS_API_TOKEN: ${TRAEFIK_CLOUDFLARE_DNS_API_TOKEN}
     labels:
+      # traefik router
       traefik.http.routers.traefik.rule: Host(${REVERSE_PROXY_HOST_TRAEFIK})
       traefik.http.routers.traefik.entrypoints: "http"
       traefik.http.routers.traefik.tls: false
+      # traefik service
+      traefik.http.routers.traefik.service: traefik
+      traefik.http.services.traefik.loadbalancer.server.port: 8080
+      # traefik middleware
       traefik.http.routers.traefik.middlewares: traefik-redirect-https
-      traefik.http.middlewares.traefik-redirect-https.redirectscheme.scheme: https
+      traefik.http.middlewares.traefik-redirect-https.redirectscheme.scheme: ${TRAEFIK_REDIRECT}
+
       # https (disable all https from others container if don't want use ssl)
+      # traefik-secure router
       traefik.http.routers.traefik-secure.entrypoints: https
       traefik.http.routers.traefik-secure.rule: Host(`${HOST_PROXY_TRAEFIK}`)
       traefik.http.routers.traefik-secure.tls: true
-      # generate certificate
       traefik.http.routers.traefik-secure.tls.certresolver: $HOMESERVER_TLS_CERTRESOLVER
       traefik.http.routers.traefik-secure.tls.domains[0].main: "$HOMESERVER_HOST_EXTENSION_PROXY"
       traefik.http.routers.traefik-secure.tls.domains[0].sans: "*.${HOMESERVER_HOST_EXTENSION_PROXY}"
+      # traefik-secure service
       traefik.http.routers.traefik-secure.service: api@internal
     networks:
       - ${HOMESERVER_NETWORK_REVERSE_PROXY}

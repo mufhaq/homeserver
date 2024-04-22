@@ -3,17 +3,22 @@ services:
     image: ${IMAGE_FILESTASH}
     container_name: ${FILESTASH_CONTAINER_NAME}
     labels:
+      # filestash router
       traefik.http.routers.filestash.entrypoints: http
       traefik.http.routers.filestash.rule: Host(${REVERSE_PROXY_HOST_FILESTASH})
       traefik.http.routers.filestash.tls: false
+      # filestash services
       traefik.http.routers.filestash.service: filestash
-      traefik.http.routers.filestash.middlewares: filestash-redirect-https
       traefik.http.services.filestash.loadbalancer.server.port: 8334
-      traefik.http.middlewares.filestash-redirect-https.redirectscheme.scheme: https
-      # https
+      # filestash middleware
+      traefik.http.routers.filestash.middlewares: filestash-redirect-https
+      traefik.http.middlewares.filestash-redirect-https.redirectscheme.scheme: ${FILESTASH_REDIRECT}
+
+      # filestash-secure router
       traefik.http.routers.filestash-secure.entrypoints: https
       traefik.http.routers.filestash-secure.rule: Host(`${HOST_PROXY_FILESTASH}`)
       traefik.http.routers.filestash-secure.tls: true
+      # filestash-secure service
       traefik.http.routers.filestash-secure.service: filestash-secure
       traefik.http.services.filestash-secure.loadbalancer.server.port: 8334
     networks:
