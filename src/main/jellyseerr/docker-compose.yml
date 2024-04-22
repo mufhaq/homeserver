@@ -1,6 +1,6 @@
 services:
   jellyseerr:
-    image: fallenbagel/jellyseerr:latest
+    image: ${IMAGE_JELLYSEERR}
     container_name: ${JELLYSEERR_CONTAINER_NAME}
     environment:
       LOG_LEVEL: ${JELLYSEERR_LOG_LEVEL}
