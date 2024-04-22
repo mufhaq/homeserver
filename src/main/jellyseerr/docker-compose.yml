@@ -1,0 +1,31 @@
+services:
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: ${JELLYSEERR_CONTAINER_NAME}
+    environment:
+      LOG_LEVEL: ${JELLYSEERR_LOG_LEVEL}
+      TZ: ${JELLYSEERR_TIMEZONE}
+    labels:
+      # filestash router
+      traefik.http.routers.jellyseerr.entrypoints: http
+      traefik.http.routers.jellyseerr.rule: Host(${REVERSE_PROXY_HOST_JELLYSEERR})
+      traefik.http.routers.jellyseerr.tls: false
+      # jellyseerr services
+      traefik.http.routers.jellyseerr.service: jellyseerr
+      traefik.http.services.jellyseerr.loadbalancer.server.port: 5055
+      # jellyseerr middleware
+      traefik.http.routers.jellyseerr.middlewares: jellyseerr-redirect-https
+      traefik.http.middlewares.jellyseerr-redirect-https.redirectscheme.scheme: ${JELLYSEERR_REDIRECT}
+
+      # jellyseerr-secure router
+      traefik.http.routers.jellyseerr-secure.entrypoints: https
+      traefik.http.routers.jellyseerr-secure.rule: Host(`${HOST_PROXY_JELLYSEERR}`)
+      traefik.http.routers.jellyseerr-secure.tls: true
+      # jellyseerr-secure service
+      traefik.http.routers.jellyseerr-secure.service: jellyseerr-secure
+      traefik.http.services.jellyseerr-secure.loadbalancer.server.port: 5055
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    volumes:
+      - ${JELLYSEERR_VOLUME}/app/config:/app/config
+    restart: unless-stopped
