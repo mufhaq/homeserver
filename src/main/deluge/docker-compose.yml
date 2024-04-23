@@ -5,8 +5,6 @@ services:
     environment:
       TZ: ${DELUGE_TIMEZONE}
       DELUGE_LOGLEVEL: ${DELUGE_LOG_LEVEL} #optional
-    depends_on:
-      - gluetun
     network_mode: "service:gluetun"
     volumes:
       - ${DELUGE_VOLUME}/config:/config
