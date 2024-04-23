@@ -15,7 +15,9 @@ services:
       SERVER_REGIONS: ${GLUETUN_SERVER_REGIONS}
       FIREWALL_VPN_INPUT_PORTS: ${GLUETUN_FIREWALL_VPN_INPUT_PORTS}
     labels:
-      # deluge traefik config must be from here because we use "network_mode: service:gluetun"
+      # torrent client traefik config must be from here because we use "network_mode: service:gluetun"
+
+      # --------------------DELUGE--------------------
       # deluge router
       traefik.http.routers.deluge.entrypoints: http
       traefik.http.routers.deluge.rule: Host(${REVERSE_PROXY_HOST_DELUGE})
@@ -34,6 +36,27 @@ services:
       # deluge-secure service
       traefik.http.routers.deluge-secure.service: deluge-secure
       traefik.http.services.deluge-secure.loadbalancer.server.port: 8112
+      # --------------------DELUGE--------------------
+
+      # --------------------QBITTORRENT--------------------
+      traefik.http.routers.qbittorrent.entrypoints: http
+      traefik.http.routers.qbittorrent.rule: Host(${REVERSE_PROXY_HOST_QBITTORRENT})
+      traefik.http.routers.qbittorrent.tls: false
+      # qbittorrent service
+      traefik.http.routers.qbittorrent.service: qbittorrent
+      traefik.http.services.qbittorrent.loadbalancer.server.port: 8080
+      # qbittorrent middleware
+      traefik.http.routers.qbittorrent.middlewares: qbittorrent-redirect-https
+      traefik.http.middlewares.qbittorrent-redirect-https.redirectscheme.scheme: ${QBITTORRENT_REDIRECT}
+
+      # qbittorrent-secure router
+      traefik.http.routers.qbittorrent-secure.entrypoints: https
+      traefik.http.routers.qbittorrent-secure.rule: Host(`${HOST_PROXY_QBITTORRENT}`)
+      traefik.http.routers.qbittorrent-secure.tls: true
+      # qbittorrent-secure service
+      traefik.http.routers.qbittorrent-secure.service: qbittorrent-secure
+      traefik.http.services.qbittorrent-secure.loadbalancer.server.port: 8080
+      # --------------------QBITTORRENT--------------------
     networks:
       - ${HOMESERVER_NETWORK_REVERSE_PROXY}
     ports:
@@ -42,5 +65,7 @@ services:
       - 8388:8388/udp # Shadowsocks
       # deluge
       - ${DELUGE_PORT_WEB_UI}:8112
+      # qbittorrent
+      - ${QBITTORRENT_PORT_WEB_UI}:8080
     volumes:
       - ${GLUETUN_VOLUME}:/gluetun
