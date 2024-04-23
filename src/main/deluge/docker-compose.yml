@@ -8,5 +8,5 @@ services:
     network_mode: "service:gluetun"
     volumes:
       - ${DELUGE_VOLUME}/config:/config
-      - ${HOMESERVER_VOLUME_SFTP_DOWNLOAD}:/downloads
+      - ${HOMESERVER_VOLUME_SFTP_TORRENT}:/data/torrents
     restart: unless-stopped
