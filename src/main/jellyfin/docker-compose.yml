@@ -29,5 +29,5 @@ services:
       - ${JELLYFIN_VOLUME}/config:/config
       - ${JELLYFIN_VOLUME}/cache:/cache
       #- ${JELLYFIN_VOLUME_OWNCLOUD}:/media:ro # owncloud
-      - ${JELLYFIN_VOLUME_SFTPGO}:/data/media:ro # sftp with sftpgo
+      - ${JELLYFIN_VOLUME_SFTP_MEDIA}:/data/media:ro # sftp with sftpgo
     restart: unless-stopped
