@@ -1,0 +1,45 @@
+services:
+  gluetun:
+    image: ${IMAGE_GLUETUN}
+    container_name: ${GLUETUN_CONTAINER_NAME}
+    cap_add:
+      - NET_ADMIN
+    environment:
+      TZ: ${GLUETUN_TIMEZONE}
+      VPN_SERVICE_PROVIDER: ${GLUETUN_VPN_SERVICE_PROVIDER}
+      VPN_TYPE: ${GLUETUN_VPN_TYPE}
+      WIREGUARD_PRIVATE_KEY: ${GLUETUN_WIREGUARD_PRIVATE_KEY}
+      WIREGUARD_PRESHARED_KEY: ${GLUETUN_WIREGUARD_PRESHARED_KEY}
+      WIREGUARD_ADDRESSES: ${GLUETUN_WIREGUARD_ADDRESSES}
+      SERVER_REGIONS: ${GLUETUN_SERVER_REGIONS}
+      FIREWALL_VPN_INPUT_PORTS: ${GLUETUN_FIREWALL_VPN_INPUT_PORTS}
+    labels:
+      # deluge traefik config must be from here because we use "network_mode: service:gluetun"
+      # deluge router
+      traefik.http.routers.deluge.entrypoints: http
+      traefik.http.routers.deluge.rule: Host(${REVERSE_PROXY_HOST_DELUGE})
+      traefik.http.routers.deluge.tls: false
+      # deluge service
+      traefik.http.routers.deluge.service: deluge
+      traefik.http.services.deluge.loadbalancer.server.port: 8112
+      # deluge middleware
+      traefik.http.routers.deluge.middlewares: deluge-redirect-https
+      traefik.http.middlewares.deluge-redirect-https.redirectscheme.scheme: ${DELUGE_REDIRECT}
+
+      # deluge-secure router
+      traefik.http.routers.deluge-secure.entrypoints: https
+      traefik.http.routers.deluge-secure.rule: Host(`${HOST_PROXY_DELUGE}`)
+      traefik.http.routers.deluge-secure.tls: true
+      # deluge-secure service
+      traefik.http.routers.deluge-secure.service: deluge-secure
+      traefik.http.services.deluge-secure.loadbalancer.server.port: 8112
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    ports:
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+      # deluge
+      - ${DELUGE_PORT_WEB_UI}:8112
+    volumes:
+      - ${GLUETUN_VOLUME}:/gluetun
