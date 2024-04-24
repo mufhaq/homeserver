@@ -2,6 +2,12 @@ services:
   jellyfin:
     image: ${IMAGE_JELLYFIN}
     container_name: ${JELLYFIN_CONTAINER_NAME}
+    user: 1000:1000
+    # for hardware acceleration
+    group_add:
+      - "${JELLYFIN_RENDER_GROUP}"
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
     labels:
       # jellyfin router
       traefik.http.routers.jellyfin.entrypoints: http
