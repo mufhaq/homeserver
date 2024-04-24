@@ -11,5 +11,5 @@ services:
     volumes:
       - ${QBITTORRENT_VOLUME}/config:/config
       - ${QBITTORRENT_VOLUME}/themes:/themes
-      - ${HOMESERVER_VOLUME_SFTP_TORRENT}:/data/torrents
+      - ${HOMESERVER_VOLUME_SFTP_TORRENT}:/data/downloads
     restart: unless-stopped

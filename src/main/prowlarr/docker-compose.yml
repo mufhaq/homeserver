@@ -1,0 +1,34 @@
+services:
+  prowlarr:
+    image: ${IMAGE_PROWLARR}
+    container_name: ${PROWLARR_CONTAINER_NAME}
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${PROWLARR_TIMEZONE}
+    labels:
+      # prowlarr router
+      traefik.http.routers.prowlarr.entrypoints: http
+      traefik.http.routers.prowlarr.rule: Host(${REVERSE_PROXY_HOST_PROWLARR})
+      traefik.http.routers.prowlarr.tls: false
+      # prowlarr service
+      traefik.http.routers.prowlarr.service: prowlarr
+      traefik.http.services.prowlarr.loadbalancer.server.port: 9696
+      # prowlarr middleware
+      traefik.http.routers.prowlarr.middlewares: prowlarr-redirect-https
+      traefik.http.middlewares.prowlarr-redirect-https.redirectscheme.scheme: ${PROWLARR_REDIRECT}
+
+      # prowlarr-secure router
+      traefik.http.routers.prowlarr-secure.entrypoints: https
+      traefik.http.routers.prowlarr-secure.rule: Host(`${HOST_PROXY_PROWLARR}`)
+      traefik.http.routers.prowlarr-secure.tls: true
+      # prowlarr-secure service
+      traefik.http.routers.prowlarr-secure.service: prowlarr-secure
+      traefik.http.services.prowlarr-secure.loadbalancer.server.port: 9696
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    ports:
+      - ${PROWLARR_PORT_WEB_UI}:9696
+    volumes:
+      - ${PROWLARR_VOLUME}:/config
+    restart: unless-stopped
