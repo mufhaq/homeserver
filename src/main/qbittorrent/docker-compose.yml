@@ -3,6 +3,8 @@ services:
     image: ${IMAGE_QBITTORRENT}
     container_name: ${QBITTORRENT_CONTAINER_NAME}
     environment:
+      PUID: 1000
+      PGID: 1000
       TZ: ${QBITTORRENT_TIMEZONE}
       TORRENTING_PORT: ${QBITTORRENT_PORT_TORRENT}
     network_mode: "service:gluetun"
