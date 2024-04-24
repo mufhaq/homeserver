@@ -1,0 +1,38 @@
+services:
+  sonarr:
+    image: ${IMAGE_SONARR}
+    container_name: ${SONARR_CONTAINER_NAME}
+    logging:
+      driver: json-file
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${SONARR_TIMEZONE}
+    labels:
+      # sonarr router
+      traefik.http.routers.sonarr.entrypoints: http
+      traefik.http.routers.sonarr.rule: Host(${REVERSE_PROXY_HOST_SONARR})
+      traefik.http.routers.sonarr.tls: false
+      # sonarr service
+      traefik.http.routers.sonarr.service: sonarr
+      traefik.http.services.sonarr.loadbalancer.server.port: 8989
+      # sonarr middleware
+      traefik.http.routers.sonarr.middlewares: sonarr-redirect-https
+      traefik.http.middlewares.sonarr-redirect-https.redirectscheme.scheme: ${SONARR_REDIRECT}
+
+      # sonarr-secure router
+      traefik.http.routers.sonarr-secure.entrypoints: https
+      traefik.http.routers.sonarr-secure.rule: Host(`${HOST_PROXY_SONARR}`)
+      traefik.http.routers.sonarr-secure.tls: true
+      # sonarr-secure service
+      traefik.http.routers.sonarr-secure.service: sonarr-secure
+      traefik.http.services.sonarr-secure.loadbalancer.server.port: 8989
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    ports:
+      - ${SONARR_PORT_WEB_UI}:8989
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${SONARR_VOLUME}:/config
+      - ${SONARR_VOLUME_SFTP}:/data
+    restart: unless-stopped
