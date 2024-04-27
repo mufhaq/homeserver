@@ -6,8 +6,10 @@ entryPoints:
     address: ":80"
   https:
     address: ":443"
-  sftp:
-    address: ":1042/tcp"
+  pihole-tcp-dns:
+    address: ":53/tcp"
+  pihole-udp-dns:
+    address: ":53/udp"
 
 serversTransport:
   insecureSkipVerify: true
