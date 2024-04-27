@@ -4,6 +4,8 @@ services:
     container_name: ${GLUETUN_CONTAINER_NAME}
     cap_add:
       - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
     environment:
       TZ: ${GLUETUN_TIMEZONE}
       BLOCK_MALICIOUS: ${GLUETUN_BLOCK_MALICIOUS}
