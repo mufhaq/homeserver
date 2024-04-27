@@ -1,0 +1,39 @@
+services:
+  rdt-client:
+    image: ${IMAGE_RDTCLIENT}
+    container_name: ${RDTCLIENT_CONTAINER_NAME}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${RDTCLIENT_TIMEZONE}
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    labels:
+      # rdtclient router
+      traefik.http.routers.rdtclient.entrypoints: http
+      traefik.http.routers.rdtclient.rule: Host(${REVERSE_PROXY_HOST_RDTCLIENT})
+      traefik.http.routers.rdtclient.tls: false
+      # rdtclient service
+      traefik.http.routers.rdtclient.service: rdtclient
+      traefik.http.services.rdtclient.loadbalancer.server.port: 6500
+      # rdtclient middleware
+      traefik.http.routers.rdtclient.middlewares: rdtclient-redirect-https
+      traefik.http.middlewares.rdtclient-redirect-https.redirectscheme.scheme: ${RDTCLIENT_REDIRECT}
+
+      # rdtclient-secure router
+      traefik.http.routers.rdtclient-secure.entrypoints: https
+      traefik.http.routers.rdtclient-secure.rule: Host(`${HOST_PROXY_RDTCLIENT}`)
+      traefik.http.routers.rdtclient-secure.tls: true
+      # rdtclient-secure service
+      traefik.http.routers.rdtclient-secure.service: rdtclient-secure
+      traefik.http.services.rdtclient-secure.loadbalancer.server.port: 6500
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    ports:
+      - ${RDTCLIENT_PORT_WEB_UI}:6500
+    volumes:
+      - ${RDTCLIENT_VOLUME}:/data/db
+      - ${HOMESERVER_VOLUME_SFTP_TORRENT}:/data/downloads
+    restart: always
