@@ -1,0 +1,37 @@
+services:
+  kavita:
+    image: ${IMAGE_KAVITA}
+    container_name: ${KAVITA_CONTAINER_NAME}
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${KAVITA_TIMEZONE}
+    labels:
+      # kavita router
+      traefik.http.routers.kavita.entrypoints: http
+      traefik.http.routers.kavita.rule: Host(${REVERSE_PROXY_HOST_KAVITA})
+      traefik.http.routers.kavita.tls: false
+      # kavita service
+      traefik.http.routers.kavita.service: kavita
+      traefik.http.services.kavita.loadbalancer.server.port: 5000
+      # kavita middleware
+      traefik.http.routers.kavita.middlewares: kavita-redirect-https
+      traefik.http.middlewares.kavita-redirect-https.redirectscheme.scheme: ${KAVITA_REDIRECT}
+
+      # kavita-secure router
+      traefik.http.routers.kavita-secure.entrypoints: https
+      traefik.http.routers.kavita-secure.rule: Host(`${HOST_PROXY_KAVITA}`)
+      traefik.http.routers.kavita-secure.tls: true
+      # kavita-secure service
+      traefik.http.routers.kavita-secure.service: kavita-secure
+      traefik.http.services.kavita-secure.loadbalancer.server.port: 5000
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    ports:
+      - ${KAVITA_PORT_WEB_UI}:5000
+    volumes:
+      - ${KAVITA_VOLUME}/config:/config
+      - ${KAVITA_VOLUME_SFTP_MEDIA}/manga:/data/manga
+      - ${KAVITA_VOLUME_SFTP_MEDIA}/comics:/data/comics
+      - ${KAVITA_VOLUME_SFTP_MEDIA}/books:/data/books
+    restart: unless-stopped
