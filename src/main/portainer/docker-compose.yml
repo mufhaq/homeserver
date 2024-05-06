@@ -1,0 +1,32 @@
+services:
+  portainer:
+    image: ${IMAGE_PORTAINER}
+    container_name: ${PORTAINER_CONTAINER_NAME}
+    labels:
+      # portainer router
+      traefik.http.routers.portainer.entrypoints: http
+      traefik.http.routers.portainer.rule: Host(${REVERSE_PROXY_HOST_PORTAINER})
+      traefik.http.routers.portainer.tls: false
+      # portainer service
+      traefik.http.routers.portainer.service: portainer
+      traefik.http.services.portainer.loadbalancer.server.port: 9000
+      # portainer middleware
+      traefik.http.routers.portainer.middlewares: portainer-redirect-https
+      traefik.http.middlewares.portainer-redirect-https.redirectscheme.scheme: ${PORTAINER_REDIRECT}
+
+      # portainer-secure router
+      traefik.http.routers.portainer-secure.entrypoints: https
+      traefik.http.routers.portainer-secure.rule: Host(`${HOST_PROXY_PORTAINER}`)
+      traefik.http.routers.portainer-secure.tls: true
+      # portainer-secure service
+      traefik.http.routers.portainer-secure.service: portainer-secure
+      traefik.http.services.portainer-secure.loadbalancer.server.port: 9000
+    networks:
+      - ${HOMESERVER_NETWORK_REVERSE_PROXY}
+    ports:
+      - ${PORTAINER_PORT_WEB_UI}:9000
+      - 8000:8000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${PORTAINER_VOLUME}:/data
+    restart: always
