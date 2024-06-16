@@ -17,7 +17,7 @@ DOCKER_DIR_VOLUME_TEST=${DOCKER_DIR_VOLUME_TEST:-"$DOCKER_DIR/volume/test"}
 DOCKER_DIR_APP_SUB=""
 DOCKER_FILE_NAME_COMPOSE="docker-compose.yml"
 DOCKER_FILE_CONFIG=${DOCKER_FILE_CONFIG:-"$DOCKER_DIR_APPS/config/$DOCKER_FILE_NAME_COMPOSE"}
-DOCKER_COMMAND_LIST="up up-test down down-test"
+DOCKER_COMMAND_LIST="up up-test down down-test pull pull-test"
 DOCKER_COMMAND_ACTION=""
 DOCKER_COMMAND_ACTION_FLAG=""
 DOCKER_FILE_LIST=""
@@ -302,15 +302,17 @@ function get_action() {
     if [ "$1" = "up" ] || [ "$1" = "up-test" ] && [ $DOCKER_COMMAND_DETACH -eq 1 ]; then
       DOCKER_COMMAND_ACTION+="up"
       DOCKER_COMMAND_ACTION_FLAG+="-d"
-    else
+    elif [ "$1" = "down" ] || [ "$1" = "down-test" ]; then
       DOCKER_COMMAND_ACTION+="down"
+    elif [ "$1" = "pull" ] || [ "$1" = "pull-test" ]; then
+      DOCKER_COMMAND_ACTION+="pull"
     fi
     if [ "$1" = "up-test" ] || [ "$1" = "down-test" ]; then
       DOCKER_COMMAND_UP_TEST=1
     fi
     return 0
   fi
-  echo "Command not found, please use one command \"up\" or \"down\""
+  echo "Command not found, please use one command \"up\" and \"down\" or \"pull\""
   exit 1
 }
 
