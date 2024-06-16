@@ -25,7 +25,7 @@ services:
       - ${HOMESERVER_NETWORK_REVERSE_PROXY}
     ports:
       - ${PORTAINER_PORT_WEB_UI}:9000
-      - 8000:8000
+      - ${PORTAINER_PORT}:8000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${PORTAINER_VOLUME}:/data
