@@ -12,3 +12,16 @@ apps/*test*
 !**example*
 data
 data_test
+
+# for /home/<user> if directly using other user home directory
+.bash_logout
+.bash_profile
+.bashrc
+.gitconfig
+.cache
+.config
+.local
+.p10k.zsh
+.zcompdump
+.zshrc
+.viminfo
