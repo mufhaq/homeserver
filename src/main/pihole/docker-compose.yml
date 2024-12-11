@@ -9,7 +9,7 @@ services:
     labels:
       # pihole router
       traefik.http.routers.pihole.entrypoints: http
-      traefik.http.routers.pihole.rule: Host(${REVERSE_PROXY_HOST_PIHOLE})
+      traefik.http.routers.pihole.rule: ${REVERSE_PROXY_HOST_PIHOLE}
       traefik.http.routers.pihole.tls: false
       # pihole service
       traefik.http.routers.pihole.service: pihole

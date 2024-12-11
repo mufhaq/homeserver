@@ -5,7 +5,7 @@ services:
     labels:
       # portainer router
       traefik.http.routers.portainer.entrypoints: http
-      traefik.http.routers.portainer.rule: Host(${REVERSE_PROXY_HOST_PORTAINER})
+      traefik.http.routers.portainer.rule: ${REVERSE_PROXY_HOST_PORTAINER}
       traefik.http.routers.portainer.tls: false
       # portainer service
       traefik.http.routers.portainer.service: portainer

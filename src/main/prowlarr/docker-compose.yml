@@ -9,7 +9,7 @@ services:
     labels:
       # prowlarr router
       traefik.http.routers.prowlarr.entrypoints: http
-      traefik.http.routers.prowlarr.rule: Host(${REVERSE_PROXY_HOST_PROWLARR})
+      traefik.http.routers.prowlarr.rule: ${REVERSE_PROXY_HOST_PROWLARR}
       traefik.http.routers.prowlarr.tls: false
       # prowlarr service
       traefik.http.routers.prowlarr.service: prowlarr

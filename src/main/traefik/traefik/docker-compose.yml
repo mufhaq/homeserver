@@ -10,7 +10,7 @@ services:
       CF_DNS_API_TOKEN: ${TRAEFIK_CLOUDFLARE_DNS_API_TOKEN}
     labels:
       # traefik router
-      traefik.http.routers.traefik.rule: Host(${REVERSE_PROXY_HOST_TRAEFIK})
+      traefik.http.routers.traefik.rule: ${REVERSE_PROXY_HOST_TRAEFIK}
       traefik.http.routers.traefik.entrypoints: "http"
       traefik.http.routers.traefik.tls: false
       # traefik service

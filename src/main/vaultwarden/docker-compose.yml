@@ -8,7 +8,7 @@ services:
     labels:
       # vaultwarden
       traefik.http.routers.vaultwarden.entrypoints: http
-      traefik.http.routers.vaultwarden.rule: Host(${REVERSE_PROXY_HOST_VAULTWARDEN})
+      traefik.http.routers.vaultwarden.rule: ${REVERSE_PROXY_HOST_VAULTWARDEN}
       traefik.http.routers.vaultwarden.tls: false
       # vaultwarden service
       traefik.http.routers.vaultwarden.service: vaultwarden

@@ -13,7 +13,7 @@ services:
     labels:
       # rdtclient router
       traefik.http.routers.rdtclient.entrypoints: http
-      traefik.http.routers.rdtclient.rule: Host(${REVERSE_PROXY_HOST_RDTCLIENT})
+      traefik.http.routers.rdtclient.rule: ${REVERSE_PROXY_HOST_RDTCLIENT}
       traefik.http.routers.rdtclient.tls: false
       # rdtclient service
       traefik.http.routers.rdtclient.service: rdtclient

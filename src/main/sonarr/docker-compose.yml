@@ -11,7 +11,7 @@ services:
     labels:
       # sonarr router
       traefik.http.routers.sonarr.entrypoints: http
-      traefik.http.routers.sonarr.rule: Host(${REVERSE_PROXY_HOST_SONARR})
+      traefik.http.routers.sonarr.rule: ${REVERSE_PROXY_HOST_SONARR}
       traefik.http.routers.sonarr.tls: false
       # sonarr service
       traefik.http.routers.sonarr.service: sonarr

@@ -5,7 +5,7 @@ services:
     labels:
       # homarr router
       traefik.http.routers.homarr.entrypoints: http
-      traefik.http.routers.homarr.rule: Host(${REVERSE_PROXY_HOST_HOMARR})
+      traefik.http.routers.homarr.rule: ${REVERSE_PROXY_HOST_HOMARR}
       traefik.http.routers.homarr.tls: false
       # homarr service
       traefik.http.routers.homarr.service: homarr

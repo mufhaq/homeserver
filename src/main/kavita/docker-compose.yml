@@ -9,7 +9,7 @@ services:
     labels:
       # kavita router
       traefik.http.routers.kavita.entrypoints: http
-      traefik.http.routers.kavita.rule: Host(${REVERSE_PROXY_HOST_KAVITA})
+      traefik.http.routers.kavita.rule: ${REVERSE_PROXY_HOST_KAVITA}
       traefik.http.routers.kavita.tls: false
       # kavita service
       traefik.http.routers.kavita.service: kavita

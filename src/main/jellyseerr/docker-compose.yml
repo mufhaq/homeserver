@@ -8,7 +8,7 @@ services:
     labels:
       # filestash router
       traefik.http.routers.jellyseerr.entrypoints: http
-      traefik.http.routers.jellyseerr.rule: Host(${REVERSE_PROXY_HOST_JELLYSEERR})
+      traefik.http.routers.jellyseerr.rule: ${REVERSE_PROXY_HOST_JELLYSEERR}
       traefik.http.routers.jellyseerr.tls: false
       # jellyseerr services
       traefik.http.routers.jellyseerr.service: jellyseerr

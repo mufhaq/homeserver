@@ -5,7 +5,7 @@ services:
     labels:
       # filestash router
       traefik.http.routers.filestash.entrypoints: http
-      traefik.http.routers.filestash.rule: Host(${REVERSE_PROXY_HOST_FILESTASH})
+      traefik.http.routers.filestash.rule: ${REVERSE_PROXY_HOST_FILESTASH}
       traefik.http.routers.filestash.tls: false
       # filestash services
       traefik.http.routers.filestash.service: filestash

@@ -11,7 +11,7 @@ services:
     labels:
       # jellyfin router
       traefik.http.routers.jellyfin.entrypoints: http
-      traefik.http.routers.jellyfin.rule: Host(${REVERSE_PROXY_HOST_JELLYFIN})
+      traefik.http.routers.jellyfin.rule: ${REVERSE_PROXY_HOST_JELLYFIN}
       traefik.http.routers.jellyfin.tls: false
       # jellyfin service
       traefik.http.routers.jellyfin.service: jellyfin

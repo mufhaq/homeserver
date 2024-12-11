@@ -17,7 +17,7 @@ services:
     labels:
       # nextcloud router
       traefik.http.routers.nextcloud.entrypoints: http
-      traefik.http.routers.nextcloud.rule: Host(${REVERSE_PROXY_HOST_NEXTCLOUD})
+      traefik.http.routers.nextcloud.rule: ${REVERSE_PROXY_HOST_NEXTCLOUD}
       traefik.http.routers.nextcloud.tls: false
       # nextcloud service
       traefik.http.routers.nextcloud.service: nextcloud
